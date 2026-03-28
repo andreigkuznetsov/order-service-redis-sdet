@@ -1,0 +1,7 @@
+app:
+  cache:
+    order-ttl-seconds: 2
+  rate-limit:
+    window-seconds: 3
+  lock:
+    ttl-seconds: 5

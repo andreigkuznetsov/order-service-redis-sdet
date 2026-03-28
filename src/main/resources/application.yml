@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orders_db
+    username: orders_user
+    password: orders_pass
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+app:
+  cache:
+    order-ttl-seconds: 60
+  idempotency:
+    ttl-hours: 24
+  rate-limit:
+    max-requests: 5
+    window-seconds: 10
+  lock:
+    ttl-seconds: 15
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    com.example.orders: INFO
