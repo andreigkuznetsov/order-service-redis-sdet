@@ -1,10 +1,8 @@
 package com.example.orders.integration;
 
 import com.example.orders.base.BaseIntegrationTest;
-import com.example.orders.dto.CreateOrderRequest;
 import com.example.orders.entity.OrderStatus;
 import com.example.orders.factory.OrderRequestFactory;
-import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -16,20 +14,10 @@ class OrderApiIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void shouldCreateOrder() {
-        CreateOrderRequest request = OrderRequestFactory.validCreateOrderRequest();
-
-        String orderId =
-                given()
-                        .contentType(ContentType.JSON)
-                        .header("X-Client-Id", "test-client")
-                        .body(request)
-                        .when()
-                        .post("/api/orders")
-                        .then()
-                        .statusCode(201)
-                        .extract()
-                        .jsonPath()
-                        .getString("id");
+        String orderId = createOrder(
+                OrderRequestFactory.validCreateOrderRequest(),
+                "test-client"
+        );
 
         assertThat(orderId).isNotBlank();
         assertThat(orderRepository.findById(UUID.fromString(orderId))).isPresent();
@@ -37,20 +25,10 @@ class OrderApiIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void shouldGetOrderById() {
-        CreateOrderRequest request = OrderRequestFactory.validCreateOrderRequest();
-
-        String orderId =
-                given()
-                        .contentType(ContentType.JSON)
-                        .header("X-Client-Id", "test-client")
-                        .body(request)
-                        .when()
-                        .post("/api/orders")
-                        .then()
-                        .statusCode(201)
-                        .extract()
-                        .jsonPath()
-                        .getString("id");
+        String orderId = createOrder(
+                OrderRequestFactory.validCreateOrderRequest(),
+                "test-client"
+        );
 
         given()
                 .when()

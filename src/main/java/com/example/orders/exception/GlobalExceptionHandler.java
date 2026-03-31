@@ -35,6 +35,12 @@ public class GlobalExceptionHandler {
         return errorBody(HttpStatus.BAD_REQUEST, "Validation failed", request.getRequestURI());
     }
 
+    @ExceptionHandler(IdempotencyProcessingException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleIdempotencyProcessing(IdempotencyProcessingException ex, HttpServletRequest request) {
+        return errorBody(HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI());
+    }
+
     private ErrorResponse errorBody(HttpStatus status, String message, String path) {
         return new ErrorResponse(
                 Instant.now(),

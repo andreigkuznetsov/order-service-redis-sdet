@@ -12,17 +12,40 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class IdempotencyService {
 
+    private static final String PROCESSING = "PROCESSING";
+
     private final StringRedisTemplate redisTemplate;
 
     @Value("${app.idempotency.ttl-hours}")
     private long ttlHours;
 
-    public Optional<String> getSavedOrderId(String key) {
+    public Optional<String> getValue(String key) {
         return Optional.ofNullable(redisTemplate.opsForValue().get(redisKey(key)));
     }
 
-    public void save(String key, String orderId) {
-        redisTemplate.opsForValue().set(redisKey(key), orderId, Duration.ofHours(ttlHours));
+    public boolean tryAcquireProcessing(String key) {
+        Boolean success = redisTemplate.opsForValue().setIfAbsent(
+                redisKey(key),
+                PROCESSING,
+                Duration.ofHours(ttlHours)
+        );
+        return Boolean.TRUE.equals(success);
+    }
+
+    public boolean isProcessingValue(String value) {
+        return PROCESSING.equals(value);
+    }
+
+    public void saveOrderId(String key, String orderId) {
+        redisTemplate.opsForValue().set(
+                redisKey(key),
+                orderId,
+                Duration.ofHours(ttlHours)
+        );
+    }
+
+    public void remove(String key) {
+        redisTemplate.delete(redisKey(key));
     }
 
     private String redisKey(String key) {
