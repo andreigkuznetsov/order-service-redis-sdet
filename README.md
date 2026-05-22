@@ -705,3 +705,32 @@ k6 run performance/scenarios/load.js
 - k6-сценарии для поведенческой и нагрузочной проверки.
 
 Именно за счёт сочетания функциональности, конкурентности и тестовой инфраструктуры проект выглядит сильнее обычного demo CRUD-сервиса.
+
+
+-------------------------------------------------------------------------------------
+-- Способ подтверждения передачи отправки (pickupMethodId)       
+select d.*
+      ,ot.name
+  from arg_dict d
+  join arg_object_type ot on ot.id = d.object_type_id
+ where d.object_type_id = arg_object_get_bysysname('ObjectType'
+                                                  ,'ShipmentConfirmMethod');
+-------------------------------------------------------------------------------------
+-- Шаблон реестра накладных для приема (pickupRepTemplateFilename)
+select r.filename
+      ,r.name
+      ,r.typesysname
+      ,r.typename
+  from arg_report_template_lst r
+  join arg_registry_template_type rt on rt.report_template_type_id = r.object_type_id
+ where rt.for_pickup = 1;
+-------------------------------------------------------------------------------------
+--=================================================================================== 
+-- Приоритетный способ сверки по реестрам (pickupRegisterMethodId)
+select d.*
+      ,ot.name
+  from arg_dict d
+  join arg_object_type ot on ot.id = d.object_type_id
+ where d.object_type_id = arg_object_get_bysysname('ObjectType'
+                                                  ,'Dict.RegisterClientMethod');
+-------------------------------------------------------------------------------------
